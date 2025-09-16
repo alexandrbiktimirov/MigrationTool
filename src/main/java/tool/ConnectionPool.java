@@ -1,13 +1,16 @@
+package tool;
+
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import java.util.logging.Logger;
 
 public class ConnectionPool {
-    private static final Logger logger = Logger.getLogger(String.valueOf(ConnectionPool.class));
+    private static final Logger logger = LoggerFactory.getLogger(ConnectionPool.class);
     private static final HikariDataSource datasource;
     private static final Properties properties = new Properties();
 
@@ -24,7 +27,8 @@ public class ConnectionPool {
             properties.load(inputStream);
             logger.info("Configuration file loaded successfully.");
         } catch (IOException e){
-            throw new RuntimeException("Error loading database.properties", e);
+            logger.error("Could not load database.properties", e);
+            throw new RuntimeException();
         }
 
         config.setJdbcUrl(properties.getProperty("database.url"));
@@ -35,6 +39,10 @@ public class ConnectionPool {
 
 
         datasource = new HikariDataSource(config);
+    }
+
+    public static HikariDataSource getDataSource() {
+        return datasource;
     }
 
     public static void close() {

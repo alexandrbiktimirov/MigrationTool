@@ -1,9 +1,17 @@
-public class Main {
-    public static void main(String[] args) {
-        String user = "sa";
-        String password = "";
-        String url = "./data/data.mv.db";
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import tool.MigrationExecutor;
+import tool.MigrationHistory;
 
-        new MigrationExecutor(url, user, password);
+public class Main {
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+
+    public static void main(String[] args) {
+        logger.info("Starting...");
+        logger.info("Preparing migration history table...");
+        MigrationHistory.initializeTable();
+
+        logger.info("Executing migrations...");
+        new MigrationExecutor().execute();
     }
 }
