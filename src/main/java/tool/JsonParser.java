@@ -2,8 +2,11 @@ package tool;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import constant.JsonTags;
-import operation.Operation;
+import model.Column;
+import model.Constraint;
+import model.ConstraintType;
+import model.Index;
+import operation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,18 +91,17 @@ public class JsonParser {
         String tableName = body != null && body.has("tableName") ? body.get("tableName").asText() : "";
 
         return switch (operationType) {
-            case JsonTags.CREATE_TABLE -> parseCreateTableOperation(body, tableName);
-            case JsonTags.ADD_COLUMN -> parseAddColumnOperationOperation(body, tableName);
-            case JsonTags.ADD_CONSTRAINT -> parseAddConstraintOperation(body, tableName);
-            case JsonTags.ADD_INDEX -> parseAddIndexOperation(body, tableName);
-            case JsonTags.RENAME_TABLE -> parseRenameTableOperation(body, tableName);
-            case JsonTags.RENAME_COLUMN -> parseRenameColumnOperation(body, tableName);
-            case JsonTags.MODIFY_COLUMN_TYPE -> parseModifycolumnTypeOperation(body, tableName);
-            case JsonTags.DROP_COLUMN -> parseDropColumnOperation(body, tableName);
-            case JsonTags.DROP_TABLE -> parseDropTableOperation(body, tableName);
-            case JsonTags.DROP_CONSTRAINT -> parseDropConstraintOperation(body, tableName);
-            case JsonTags.DROP_INDEX -> parseDropIndexOperation(body, tableName);
-            case JsonTags.ROLLBACK -> parseRollback(body, tableName);
+            case "createTable" -> parseCreateTableOperation(body, tableName);
+            case "addColumn" -> parseAddColumnOperationOperation(body, tableName);
+            case "addConstraint" -> parseAddConstraintOperation(body, tableName);
+            case "addIndex" -> parseAddIndexOperation(body, tableName);
+            case "renameTable" -> parseRenameTableOperation(body, tableName);
+            case "renameColumn" -> parseRenameColumnOperation(body, tableName);
+            case "modifyColumnType" -> parseModifycolumnTypeOperation(body, tableName);
+            case "dropColumn" -> parseDropColumnOperation(body, tableName);
+            case "dropTable" -> new DropTable(tableName);
+            case "dropConstraint" -> parseDropConstraintOperation(body, tableName);
+            case "dropIndex" -> parseDropIndexOperation(body, tableName);
             default -> {
                 logger.error("Unrecognized operation type: {}", operationType);
                 yield null;
@@ -107,5 +109,140 @@ public class JsonParser {
         };
     }
 
-    // TODO: create specific parsing methods
+    private Operation parseCreateTableOperation(JsonNode body, String tableName) {
+        List<Column> columns = new ArrayList<>();
+
+        JsonNode columnNodes = body.path("columns");
+
+        if (columnNodes.isArray()) {
+            for (JsonNode columnNode : columnNodes) {
+                columns.add(parseColumn(columnNode, tableName));
+            }
+        }
+
+        return new CreateTable(columns);
+    }
+
+    private Operation parseAddColumnOperationOperation(JsonNode body, String tableName) {
+        JsonNode columnNode = body.get("column");
+        Column column = parseColumn(columnNode, tableName);
+
+        return new AddColumn(column);
+    }
+
+    private Operation parseAddConstraintOperation(JsonNode body, String tableName) {
+        JsonNode columnNode = body.get("column");
+        Column column = parseColumn(columnNode, tableName);
+
+        return new AddConstraint(column.getConstraintList().getFirst());
+    }
+
+    private Operation parseAddIndexOperation(JsonNode body, String tableName) {
+        JsonNode indexNode = body.get("index");
+        Index index = parseIndex(indexNode, tableName);
+
+        return new AddIndex(index);
+    }
+
+    private Operation parseRenameTableOperation(JsonNode body, String tableName) {
+        String newTableName = body.get("newTableName").asText();
+
+        return new RenameTable(newTableName);
+    }
+
+    private Operation parseRenameColumnOperation(JsonNode body, String tableName) {
+        JsonNode columnNode = body.get("column");
+        Column column = parseColumn(columnNode, tableName);
+
+        return new RenameColumn(column);
+    }
+
+    private Operation parseModifycolumnTypeOperation(JsonNode body, String tableName) {
+        JsonNode columnNode = body.get("column");
+        Column column = parseColumn(columnNode, tableName);
+
+        return new ModifyColumnType(column);
+    }
+
+    private Operation parseDropColumnOperation(JsonNode body, String tableName) {
+        JsonNode columnNode = body.get("column");
+        Column column = parseColumn(columnNode, tableName);
+
+        return new DropColumn(column);
+    }
+
+    private Operation parseDropConstraintOperation(JsonNode body, String tableName) {
+        JsonNode columnNode = body.get("column");
+        Column column = parseColumn(columnNode, tableName);
+
+        return new DropConstraint(column.getConstraintList().getFirst());
+    }
+
+    private Operation parseDropIndexOperation(JsonNode body, String tableName) {
+        JsonNode indexNode = body.get("index");
+        Index index = parseIndex(indexNode, tableName);
+
+        return new DropIndex(index);
+    }
+
+    private Column parseColumn(JsonNode columnNode, String tableName) {
+        Column column = new Column();
+        column.setColumnName(columnNode.path("columnName").asText());
+        column.setTableName(tableName);
+        column.setType(columnNode.path("columnType").asText());
+        column.setNewDataType(columnNode.path("newDataType").asText());
+        column.setNewColumnName(columnNode.path("newColumnName").asText());
+
+        logger.debug("Parsing column: {}", column.getColumnName());
+
+        JsonNode constraints = columnNode.path("constraints");
+
+        for (JsonNode constraintNode : constraints) {
+            Constraint constraint = parseConstraint(constraintNode, tableName, column.getColumnName());
+            column.getConstraintList().add(constraint);
+        }
+
+        logger.debug("Finished parsing column: {} with constraints: {}", column.getColumnName(), column.getConstraintList());
+
+        return column;
+    }
+
+    private Constraint parseConstraint(JsonNode constraintNode, String tableName, String columnName) {
+        Constraint constraint = new Constraint();
+        constraint.setTableName(tableName);
+
+        ConstraintType type = ConstraintType.valueOf(constraintNode.get("type").asText().toUpperCase());
+        constraint.setConstraintType(type);
+
+        constraint.setConstraintName(constraintNode.path("constraintName").asText());
+        constraint.setExpression(constraintNode.path("expression").asText());
+        constraint.setColumnName(columnName);
+
+        logger.debug("Constraint: Type={}, Name={}", constraint.getConstraintType(), constraint.getConstraintName());
+
+        return constraint;
+    }
+
+    private Index parseIndex(JsonNode indexNode, String tableName) {
+        Index index = new Index();
+        index.setUnique(indexNode.path("unique").asBoolean());
+        index.setTableName(tableName);
+
+        List<String> columnNames = index.getColumns();
+        JsonNode columnNodes = indexNode.path("column");
+
+        for (JsonNode columnNode : columnNodes) {
+            String columnName = columnNode.path("columnName").asText();
+
+            if (!columnNames.contains(columnName)) {
+                columnNames.add(columnName);
+            }
+        }
+
+        index.setIndexName(indexNode.path("indexName").asText());
+
+        logger.debug("Index: Unique={}, Name={}", index.isUnique(), index.getIndexName());
+
+        return index;
+    }
 }
