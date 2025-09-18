@@ -1,4 +1,8 @@
 package operation;
 
-public class DropTable {
+public class DropTable extends Operation {
+    private String tableName;
+    public DropTable(String tableName) {
+        this.tableName = tableName;
+    }
 }

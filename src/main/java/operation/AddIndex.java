@@ -1,4 +1,11 @@
 package operation;
 
-public class AddIndex {
+import model.Index;
+
+public class AddIndex implements Operation{
+    private final Index index;
+
+    public AddIndex(Index index) {
+        this.index = index;
+    }
 }

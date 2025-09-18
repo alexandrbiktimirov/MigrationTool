@@ -68,4 +68,8 @@ public class Column {
     public void setNewColumnName(String newColumnName) {
         this.newColumnName = newColumnName;
     }
+
+    public List<Constraint> getConstraintList() {
+        return constraintList;
+    }
 }
