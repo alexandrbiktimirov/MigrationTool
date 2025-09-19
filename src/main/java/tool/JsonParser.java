@@ -147,7 +147,7 @@ public class JsonParser {
     private Operation parseRenameTableOperation(JsonNode body, String tableName) {
         String newTableName = body.get("newTableName").asText();
 
-        return new RenameTable(newTableName);
+        return new RenameTable(tableName, newTableName);
     }
 
     private Operation parseRenameColumnOperation(JsonNode body, String tableName) {
