@@ -16,15 +16,17 @@ public class MigrationHistory {
                 CREATE TABLE IF NOT EXISTS migration_history (
                 id INTEGER AUTO_INCREMENT PRIMARY KEY,
                 migration_id INTEGER NOT NULL,
-                author VARCHAR(50) NOT NULL,
-                filename VARCHAR(50) NOT NULL,
+                author VARCHAR(255) NOT NULL,
+                filename VARCHAR(255) NOT NULL,
                 execution_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                checksum VARCHAR(50) NOT NULL,
+                checksum VARCHAR(255) NOT NULL);
                 """;
 
         try (Connection connection = ConnectionPool.getDataSource().getConnection()){
             connection.createStatement().execute(sqlQuery);
             logger.info("Migration history table is initialized.");
+
+            connection.commit();
         } catch(SQLException e){
             logger.error("Failed to initialize migration history table.");
             throw new RuntimeException();

@@ -32,7 +32,7 @@ public class ConnectionPool {
         }
 
         config.setJdbcUrl(properties.getProperty("database.url"));
-        config.setUsername(properties.getProperty("database.username"));
+        config.setUsername(properties.getProperty("database.user"));
         config.setPassword(properties.getProperty("database.password"));
         config.setAutoCommit(false);
         config.setMaximumPoolSize(Integer.parseInt(properties.getProperty("database.maxPoolSize")));

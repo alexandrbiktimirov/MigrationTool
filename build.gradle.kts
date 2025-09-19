@@ -10,7 +10,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.zaxxer:HikariCP:2.3.2")
+    implementation("com.zaxxer:HikariCP:6.2.1")
     implementation("ch.qos.logback:logback-classic:1.5.13")
     implementation("org.slf4j:slf4j-api:1.7.25")
     implementation("com.h2database:h2:2.2.220")
