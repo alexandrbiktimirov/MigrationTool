@@ -23,7 +23,7 @@ public class RenameTable extends Operation {
 
         String query = "ALTER TABLE " +
                 tableName +
-                "RENAME TO " +
+                " RENAME TO " +
                 newTableName +
                 ";";
 

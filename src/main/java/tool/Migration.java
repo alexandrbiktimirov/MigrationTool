@@ -29,7 +29,7 @@ public class Migration {
         }
 
         checksum.append("|");
-        return checksum.toString();
+        return ChecksumGenerator.generateChecksum(checksum.toString());
     }
 
     public int getId() {

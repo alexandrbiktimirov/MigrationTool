@@ -14,13 +14,13 @@ public class Constraint {
             case NOT_NULL -> "NOT NULL";
             case CHECK -> String.format("%s CHECK (%s)", constraintName, expression);
             case FOREIGN_KEY -> String.format("%s FOREIGN KEY (%s) REFERENCES %s", constraintName, columnName, expression);
-            case UNIQUE -> String.format("%s UNIQUE KEY (%s)", constraintName, columnName);
+            case UNIQUE -> String.format("%s UNIQUE (%s)", constraintName, columnName);
             case PRIMARY_KEY -> String.format("%s PRIMARY KEY (%s)", constraintName, columnName);
         };
     }
 
     public boolean isNamed(){
-        return (constraintType != ConstraintType.NOT_NULL) && (constraintType != ConstraintType.PRIMARY_KEY);
+        return (constraintType != ConstraintType.NOT_NULL) && (constraintType != ConstraintType.AUTO_INCREMENT);
     }
 
     public String getConstraintName() {

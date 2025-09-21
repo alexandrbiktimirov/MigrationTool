@@ -17,7 +17,7 @@ public class AddConstraint extends Operation {
 
     @Override
     public void execute(Connection connection) {
-        logger.debug("Executing AddColumn operation on table: {}; constraint:  {}", constraint.getTableName(), constraint.getConstraintName());
+        logger.debug("Executing AddConstraint operation on table: {}; constraint:  {}", constraint.getTableName(), constraint.getConstraintName());
 
         if (constraint.isNamed()){
             String query = "ALTER TABLE " +

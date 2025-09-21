@@ -1,0 +1,284 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": 1,
+        "author": "your.name",
+        "changes": [
+          {
+            "createTable": {
+              "tableName": "company",
+              "columns": [
+                { "columnName": "id", "columnType": "INT AUTO_INCREMENT", "constraints": [ { "type": "PRIMARY_KEY", "constraintName": "pk_company_id" } ] },
+                { "columnName": "name", "columnType": "VARCHAR(50)", "constraints": [ { "type": "NOT_NULL" } ] },
+                { "columnName": "city", "columnType": "VARCHAR(50)" },
+                { "columnName": "country", "columnType": "CHAR(2)", "constraints": [ { "type": "NOT_NULL" } ] }
+              ]
+            }
+          },
+          {
+            "createTable": {
+              "tableName": "person",
+              "columns": [
+                { "columnName": "id", "columnType": "INT AUTO_INCREMENT", "constraints": [ { "type": "PRIMARY_KEY", "constraintName": "pk_person_id" } ] },
+                { "columnName": "name", "columnType": "VARCHAR(100)", "constraints": [ { "type": "NOT_NULL" } ] },
+                { "columnName": "city", "columnType": "VARCHAR(50)" },
+                { "columnName": "country", "columnType": "CHAR(2)", "constraints": [ { "type": "NOT_NULL" } ] },
+                {
+                  "columnName": "company_id",
+                  "columnType": "INT",
+                  "constraints": [
+                    { "type": "FOREIGN_KEY", "constraintName": "fk_person_company", "expression": "  company(id) ON UPDATE CASCADE ON DELETE SET NULL" }
+                  ]
+                },
+                { "columnName": "nickname", "columnType": "VARCHAR(30)" }
+              ]
+            }
+          },
+          {
+            "createTable": {
+              "tableName": "passport",
+              "columns": [
+                { "columnName": "id", "columnType": "INT AUTO_INCREMENT", "constraints": [ { "type": "PRIMARY_KEY", "constraintName": "pk_passport_id" } ] },
+                {
+                  "columnName": "person_id",
+                  "columnType": "INT",
+                  "constraints": [
+                    { "type": "NOT_NULL" },
+                    { "type": "UNIQUE", "constraintName": "uq_passport_person" },
+                    { "type": "FOREIGN_KEY", "constraintName": "fk_passport_person", "expression": "  person(id) ON DELETE CASCADE" }
+                  ]
+                },
+                {
+                  "columnName": "passport_no",
+                  "columnType": "VARCHAR(20)",
+                  "constraints": [
+                    { "type": "NOT_NULL" },
+                    { "type": "UNIQUE", "constraintName": "uq_passport_no" }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "createTable": {
+              "tableName": "skill",
+              "columns": [
+                { "columnName": "id", "columnType": "INT AUTO_INCREMENT", "constraints": [ { "type": "PRIMARY_KEY", "constraintName": "pk_skill_id" } ] },
+                { "columnName": "name", "columnType": "VARCHAR(50)", "constraints": [ { "type": "NOT_NULL" }, { "type": "UNIQUE", "constraintName": "uq_skill_name" } ] }
+              ]
+            }
+          },
+          {
+            "createTable": {
+              "tableName": "person_skill",
+              "columns": [
+                { "columnName": "id", "columnType": "INT AUTO_INCREMENT", "constraints": [ { "type": "PRIMARY_KEY", "constraintName": "pk_person_skill_id" } ] },
+                { "columnName": "person_id", "columnType": "INT", "constraints": [ { "type": "NOT_NULL" }, { "type": "FOREIGN_KEY", "constraintName": "fk_ps_person", "expression": "  person(id) ON DELETE CASCADE" } ] },
+                { "columnName": "skill_id", "columnType": "INT", "constraints": [ { "type": "NOT_NULL" }, { "type": "FOREIGN_KEY", "constraintName": "fk_ps_skill", "expression": "  skill(id) ON DELETE CASCADE" } ] }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "changeSet": {
+        "id": 2,
+        "author": "your.name",
+        "changes": [
+          { "addIndex": { "tableName": "person", "index": { "indexName": "idx_person_name", "unique": false, "column": [ { "columnName": "name" } ] } } },
+          { "addIndex": { "tableName": "company", "index": { "indexName": "idx_company_name", "unique": false, "column": [ { "columnName": "name" } ] } } },
+          { "addIndex": { "tableName": "skill", "index": { "indexName": "idx_skill_name", "unique": false, "column": [ { "columnName": "name" } ] } } },
+          { "addIndex": { "tableName": "person", "index": { "indexName": "idx_person_company", "unique": false, "column": [ { "columnName": "company_id" } ] } } }
+        ]
+      }
+    },
+    {
+      "changeSet": {
+        "id": 3,
+        "author": "your.name",
+        "changes": [
+          {
+            "addConstraint": {
+              "tableName": "person_skill",
+              "column": {
+                "columnName": "id",
+                "constraints": [
+                  { "type": "UNIQUE", "constraintName": "uq_person_skill_pair", "expression": "UNIQUE(person_id, skill_id)" }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "changeSet": {
+        "id": 4,
+        "author": "your.name",
+        "changes": [
+          {
+            "createTable": {
+              "tableName": "audit_log",
+              "columns": [
+                { "columnName": "id", "columnType": "INT AUTO_INCREMENT", "constraints": [ { "type": "PRIMARY_KEY", "constraintName": "pk_audit_log_id" } ] },
+                { "columnName": "message", "columnType": "VARCHAR(100)" }
+              ]
+            }
+          }
+        ]
+      }
+    },
+
+    {
+      "changeSet": {
+        "id": 5,
+        "author": "your.name",
+        "changes": [
+          { "renameTable": { "tableName": "audit_log", "newTableName": "audit_entry" } }
+        ]
+      }
+    },
+
+    {
+      "changeSet": {
+        "id": 6,
+        "author": "your.name",
+        "changes": [
+          { "renameColumn": { "tableName": "person", "column": { "columnName": "nickname", "newColumnName": "alias" } } }
+        ]
+      }
+    },
+
+    {
+      "changeSet": {
+        "id": 7,
+        "author": "your.name",
+        "changes": [
+          { "modifyColumnType": { "tableName": "person", "column": { "columnName": "alias", "newDataType": "VARCHAR(60)" } } }
+        ]
+      }
+    },
+
+    {
+      "changeSet": {
+        "id": 8,
+        "author": "your.name",
+        "changes": [
+          { "addColumn": { "tableName": "person", "column": { "columnName": "email", "columnType": "VARCHAR(100)" } } }
+        ]
+      }
+    },
+
+    {
+      "changeSet": {
+        "id": 9,
+        "author": "your.name",
+        "changes": [
+          { "dropColumn": { "tableName": "person", "column": { "columnName": "email" } } }
+        ]
+      }
+    },
+
+    {
+      "changeSet": {
+        "id": 10,
+        "author": "your.name",
+        "changes": [
+          {
+            "addConstraint": {
+              "tableName": "person",
+              "column": {
+                "columnName": "country",
+                "constraints": [
+                  { "type": "CHECK", "constraintName": "ck_person_country_len", "expression": "CHAR_LENGTH(country) = 2" }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+
+    {
+      "changeSet": {
+        "id": 11,
+        "author": "your.name",
+        "changes": [
+          {
+            "dropConstraint": {
+              "tableName": "person",
+              "column": {
+                "columnName": "country",
+                "constraints": [
+                  { "type": "CHECK", "constraintName": "ck_person_country_len" }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+
+    {
+      "changeSet": {
+        "id": 12,
+        "author": "your.name",
+        "changes": [
+          { "dropIndex": { "tableName": "skill", "index": { "indexName": "idx_skill_name", "unique": false, "column": [ { "columnName": "name" } ] } } }
+        ]
+      }
+    },
+
+    {
+      "changeSet": {
+        "id": 13,
+        "author": "your.name",
+        "changes": [
+          { "addIndex": { "tableName": "skill", "index": { "indexName": "idx_skill_name", "unique": false, "column": [ { "columnName": "name" } ] } } }
+        ]
+      }
+    },
+
+    {
+      "changeSet": {
+        "id": 14,
+        "author": "your.name",
+        "changes": [
+          { "dropConstraint": { "tableName": "person_skill", "column": { "columnName": "id", "constraints": [ { "type": "UNIQUE", "constraintName": "uq_person_skill_pair" } ] } } }
+        ]
+      }
+    },
+
+    {
+      "changeSet": {
+        "id": 15,
+        "author": "your.name",
+        "changes": [
+          { "addConstraint": { "tableName": "person_skill", "column": { "columnName": "id", "constraints": [ { "type": "UNIQUE", "constraintName": "uq_person_skill_pair", "expression": "UNIQUE(person_id, skill_id)" } ] } } }
+        ]
+      }
+    },
+
+    {
+      "changeSet": {
+        "id": 16,
+        "author": "your.name",
+        "changes": [
+          { "dropTable": { "tableName": "audit_entry" } }
+        ]
+      }
+    },
+
+    {
+      "changeSet": {
+        "id": 17,
+        "author": "your.name",
+        "changes": [
+          { "renameColumn": { "tableName": "person", "column": { "columnName": "alias", "newColumnName": "nickname" } } }
+        ]
+      }
+    }
+  ]
+}

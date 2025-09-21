@@ -23,6 +23,8 @@ public class RenameColumn extends Operation {
                 column.getTableName() +
                 " RENAME COLUMN " +
                 column.getColumnName() +
+                " TO " +
+                column.getNewColumnName() +
                 ";";
 
         executeSqlQuery(connection, query);

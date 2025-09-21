@@ -26,6 +26,7 @@ public class AddIndex extends Operation{
                 uniqueKeyword +
                 index.getIndexName() +
                 " ON " +
+                index.getTableName() +
                 "(" + columns + ")" +
                 ";";
 
