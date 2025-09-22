@@ -26,7 +26,6 @@ public class MigrationHistory {
             connection.createStatement().execute(sqlQuery);
             logger.info("Migration history table is initialized.");
 
-            connection.commit();
         } catch(SQLException e){
             logger.error("Failed to initialize migration history table.");
             throw new RuntimeException();
@@ -37,8 +36,8 @@ public class MigrationHistory {
         logger.debug("Checking if migration with id {} was already executed.", migration.getId());
 
         try {
-            PreparedStatement query = connection.prepareStatement("SELECT COUNT(*) FROM migration_history WHERE migration_id=?");
-            query.setInt(1, migration.getId());
+            PreparedStatement query = connection.prepareStatement("SELECT COUNT(*) FROM migration_history WHERE checksum=?");
+            query.setString(1, migration.getChecksum());
 
             ResultSet resultSet = query.executeQuery();
 
