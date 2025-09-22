@@ -35,18 +35,20 @@ public class MigrationExecutor {
                     for (Operation operation : migration.getOperations()) {
                         operation.execute(connection);
                     }
-
-                    MigrationHistory.storeSuccessfulMigration(migration, connection);
-                    connection.commit();
                 } catch (Exception e) {
                     connection.rollback();
                     logger.error("Migration ID={} Author={} failed", migration.getId(), migration.getAuthor());
                     throw new RuntimeException(e);
                 }
+
+                MigrationHistory.storeSuccessfulMigration(migration, connection);
+                connection.commit();
             }
         } catch(SQLException e){
             logger.error("Database connection error: {}", e.getMessage());
             throw new RuntimeException(e);
         }
+
+        ConnectionPool.close();
     }
 }
