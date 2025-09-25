@@ -12,6 +12,6 @@ public class Main {
         MigrationHistory.initializeTable();
 
         logger.info("Executing migrations...");
-        new MigrationExecutor().execute();
+        MigrationExecutor.execute();
     }
 }

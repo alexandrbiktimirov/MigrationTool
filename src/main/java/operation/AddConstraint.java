@@ -22,7 +22,7 @@ public class AddConstraint extends Operation {
         if (constraint.isNamed()){
             String query = "ALTER TABLE " +
                     constraint.getTableName() +
-                    " ADD CONSTRAINT " +
+                    " ADD CONSTRAINT IF NOT EXISTS " +
                     constraint +
                     ";";
 

@@ -22,7 +22,7 @@ public class AddIndex extends Operation{
         String uniqueKeyword = index.isUnique() ? "UNIQUE" : "";
         String columns = String.join(",", index.getColumns());
 
-        String query = "CREATE INDEX " +
+        String query = "CREATE INDEX IF NOT EXISTS " +
                 uniqueKeyword +
                 index.getIndexName() +
                 " ON " +

@@ -11,7 +11,7 @@ import java.util.List;
 public class MigrationExecutor {
     private static final Logger logger = LoggerFactory.getLogger(MigrationExecutor.class);
 
-    public void execute() {
+    public static void execute() {
         JsonParser parser = new JsonParser();
         List<Migration> migrations = parser.parseMigrations("./json/example-changelog.json");
 

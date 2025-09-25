@@ -18,7 +18,7 @@ public class DropTable extends Operation {
     public void execute(Connection connection) {
         logger.debug("Executing DropTable operation on table: {}", tableName);
 
-        String query = "DROP TABLE " +
+        String query = "DROP TABLE IF EXISTS " +
                 tableName +
                 ";";
 

@@ -19,7 +19,7 @@ public class DropIndex extends Operation {
     public void execute(Connection connection) {
         logger.info("Executing DropIndex on table: {}, index: {}", index.getTableName(), index.getIndexName());
 
-        String query = "DROP INDEX " +
+        String query = "DROP INDEX IF EXISTS " +
                 index.getIndexName() +
                 ";";
 

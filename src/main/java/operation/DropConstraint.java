@@ -23,7 +23,7 @@ public class DropConstraint extends Operation {
         if (constraint.isNamed()){
             String query = "ALTER TABLE " +
                     constraint.getTableName() +
-                    " DROP CONSTRAINT " +
+                    " DROP CONSTRAINT IF EXISTS " +
                     constraint.getConstraintName() +
                     ";";
 

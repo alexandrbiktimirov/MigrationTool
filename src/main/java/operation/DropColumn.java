@@ -21,7 +21,7 @@ public class DropColumn extends Operation {
 
         String query = "ALTER TABLE " +
                 column.getTableName() +
-                " DROP COLUMN " +
+                " DROP COLUMN IF EXISTS " +
                 column.getColumnName() +
                 ";";
 

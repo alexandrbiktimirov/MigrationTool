@@ -21,7 +21,7 @@ public class RenameTable extends Operation {
     public void execute(Connection connection) {
         logger.debug("Executing RenameTable on table: {}", tableName);
 
-        String query = "ALTER TABLE " +
+        String query = "ALTER TABLE IF EXISTS " +
                 tableName +
                 " RENAME TO " +
                 newTableName +

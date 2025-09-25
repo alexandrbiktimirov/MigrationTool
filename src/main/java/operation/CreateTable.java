@@ -22,7 +22,7 @@ public class CreateTable extends Operation {
     public void execute(Connection connection) {
         logger.debug("Executing CreateTable operation, table name: {}", tableName);
 
-        StringBuilder sb = new StringBuilder("CREATE TABLE ");
+        StringBuilder sb = new StringBuilder("CREATE TABLE IF NOT EXISTS ");
         sb
                 .append(tableName)
                 .append(" (");

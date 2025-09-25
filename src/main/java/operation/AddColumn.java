@@ -22,7 +22,7 @@ public class AddColumn extends Operation {
 
         String query = "ALTER TABLE " +
                 column.getTableName() +
-                " ADD COLUMN " +
+                " ADD COLUMN IF NOT EXISTS " +
                 column.getColumnName() +
                 " " +
                 column.getType() +
